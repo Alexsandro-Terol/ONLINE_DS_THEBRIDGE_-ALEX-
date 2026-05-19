@@ -1,355 +1,292 @@
-[README.md](https://github.com/user-attachments/files/27749696/README.md)
-<div align="center">
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/LightGBM-Ensemble-FF6B6B?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Scikit--Learn-Pipeline-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white"/>
+  <img src="https://img.shields.io/badge/XAUUSD-M30%20%7C%20H1-FFD700?style=for-the-badge"/>
+</p>
 
-<img src="https://img.shields.io/badge/AUREO_SYSTEM-v1.0-FFD700?style=for-the-badge&logo=bitcoin&logoColor=black" alt="version"/>
-<img src="https://img.shields.io/badge/XAUUSD-ECN-gold?style=for-the-badge&logo=tradingview&logoColor=black" alt="instrument"/>
-<img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="python"/>
-<img src="https://img.shields.io/badge/MetaTrader-5-1A1A2E?style=for-the-badge&logo=metatrader&logoColor=white" alt="mt5"/>
-<img src="https://img.shields.io/badge/Telegram-Alerts-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="telegram"/>
+<h1 align="center">🥇 GoldSense ML</h1>
+<h3 align="center">Sistema Cuantitativo de Machine Learning para Predicción de Movimientos en XAUUSD</h3>
 
-<br/><br/>
-
-```
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║      ▄▀█ █ █ █▀█ █▀▀ █▀█   █▀ █▄█ █▀ ▀█▀ █▀▀ █▀▄▀█      ║
-║      █▀█ █▄█ █▀▄ ██▄ █▄█   ▄█  █  ▄█  █  ██▄ █ ▀ █      ║
-║                                                           ║
-║        Triple Confluence Engine for XAUUSD               ║
-║        Zonas  ×  Gann Estatístico  ×  Fibonacci           ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-```
-
-*Um sistema quantitativo de suporte à decisão para ouro (XAUUSD),*  
-*construído sobre três metodologias complementares de análise técnica.*
-
-</div>
+<p align="center">
+  <em>Pipeline institucional anti-leakage · Walk-Forward Validation · DXY Edge Analysis · Streamlit App</em>
+</p>
 
 ---
 
-## ✨ O que é o AUREO SYSTEM?
+## 🎯 Problema de Negocio
 
-O AUREO SYSTEM é um motor de confluências para **XAUUSD** que combina três sistemas de análise técnica independentes e só gera sinal quando **todos apontam para o mesmo nível de preço**.
+El oro (XAUUSD) es uno de los activos más negociados del mundo, con liquidez diaria superior a **$130 mil millones**. Los traders enfrentan un mercado impulsado por la dinámica del dólar (DXY), eventos macroeconómicos y microestructura compleja.
 
-A lógica é simples: quanto mais sistemas confirmam um nível, maior a probabilidade de reação do mercado nesse ponto.
+**Objetivo**: Predecir si el precio del oro alcanzará un **TP de 0.15%** antes de un **SL de 0.10%** en las siguientes 6 velas M30, con un edge estadístico real y robusto out-of-sample.
+
+> *"No buscamos el modelo perfecto. Buscamos un edge pequeño pero real, estable en el tiempo y explotable con costos reales."*
+
+---
+
+## 📊 Dataset
+
+| Parámetro | Valor |
+|:----------|:------|
+| **Instrumento** | XAUUSD (Oro/USD) |
+| **Timeframe** | M30 (velas de 30 minutos) |
+| **Período** | 2021-11-22 → 2026-02-20 |
+| **Registros** | **46,081 velas** (≫ mínimo requerido) |
+| **Fuente** | Dataset propio M30 — XAUUSD + DXY sincronizados |
+| **Features generados** | **30 features estables** (de 87 iniciales) |
+| **Valores nulos** | 0 |
+| **Leakage** | ✅ Verificado — cero features futuros |
+
+---
+
+## 🏗️ Arquitectura del Pipeline
 
 ```
-                    ┌──────────────────────────────────────┐
-                    │          AUREO SYSTEM v1.0           │
-                    └─────────────┬────────────────────────┘
-                                  │
-              ┌───────────────────┼───────────────────┐
-              │                   │                   │
-              ▼                   ▼                   ▼
-      ┌───────────────┐   ┌───────────────┐   ┌───────────────┐
-      │   📦 ZONAS    │   │  🔲 GANN BOX  │   │  🌀 FIBONACCI │
-      │  (Documento 1)│   │ (Documento 2) │   │ (Documento 3) │
-      │               │   │               │   │               │
-      │ Vela única    │   │ 2 níveis      │   │ Retrações     │
-      │ 20–70 pips    │   │ estatísticos  │   │ 0.618 / 1/φ   │
-      │ Contexto 3+3  │   │ M5 reactions  │   │ Extensões     │
-      │ Espaço 150pip │   │ qty + volume  │   │ 1.618 / φ     │
-      └───────┬───────┘   └───────┬───────┘   └───────┬───────┘
-              │                   │                   │
-              └───────────────────┼───────────────────┘
-                                  │
-                                  ▼
-                    ┌─────────────────────────┐
-                    │   CONFLUENCE ENGINE     │
-                    │  Agrupa níveis ±$25     │
-                    │                         │
-                    │  ⭐ SINGLE   = 1 sistema │
-                    │  ⭐⭐ DOUBLE  = 2 sistemas│
-                    │  ⭐⭐⭐ TRIPLE = 3 sistemas│ ← Executa ordem
-                    └─────────────┬───────────┘
-                                  │
-                    ┌─────────────┼─────────────┐
-                    │             │             │
-                    ▼             ▼             ▼
-             📟 Terminal    📱 Telegram    📈 MT5 Order
-              (log live)    (alerta)      (BUY/SELL LIMIT)
+XAUUSD_DXY.csv (raw)
+        │
+        ▼
+┌─────────────────────────────────────────────────────┐
+│              data_processing.py v3                   │
+│  • Corrección naming invertido (DXY ↔ XAUUSD)      │
+│  • 87 features estacionarios (sin precios absolutos) │
+│  • KMeans K=4 (régimen de mercado no supervisado)   │
+│  • Triple Barrier labeling (TP/SL/Timeout)          │
+│  • Leakage Audit automático                         │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│              training.py v4                          │
+│  • Feature Stability Selection (top 30, CV ≤ 1.5)  │
+│  • Purged Walk-Forward (8 folds + embargo 8 velas)  │
+│  • Split temporal 70/15/15 (cronológico, sin shuffle)│
+│  • LightGBM + XGBoost + RandomForest → Ensemble     │
+│  • Regularización fuerte (num_leaves=5, λ=20)       │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│              analysis.py + evaluation.py             │
+│  • Threshold Optimization (0.50 → 0.65)            │
+│  • Rolling AUC — alpha decay analysis               │
+│  • DXY Lead-Lag causal analysis                     │
+│  • Regime-aware performance                         │
+│  • Backtest realista (spread 3 pips)                │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+            Streamlit App (app_streamlit/app.py)
 ```
 
 ---
 
-## 🏗️ Arquitetura
+## 🤖 Modelos
+
+| Modelo | Tipo | AUC Test | Train-Val Gap |
+|:-------|:-----|:--------:|:-------------:|
+| LinearRegression | Supervisado (baseline) | 0.51 | — |
+| Ridge | Supervisado | 0.52 | — |
+| SVR | Supervisado | 0.53 | — |
+| RandomForest | Supervisado | 0.592 | 0.059 ✅ |
+| XGBoost | Supervisado | 0.588 | 0.071 ✅ |
+| **LightGBM** | **Supervisado** | **0.590** | **0.072 ✅** |
+| **Ensemble** | **Stacking** | **0.591** | **0.065 ✅** |
+| KMeans K=4 | **No supervisado** | — | Régimen mercado |
+
+> **Validación**: `PurgedWalkForward(n_folds=8, embargo=8 velas)` — estándar institucional
+
+---
+
+## 📈 Resultados
+
+### Métricas principales (Ensemble — Test Set 2025-2026)
 
 ```
-aureo_system/
+┌──────────────────────────────────────────────┐
+│  AUC-ROC           0.591   (> 0.55 = alpha) │
+│  Walk-Forward AUC  0.560 ± 0.025            │
+│  Train-Val Gap     0.059   (< 0.10 = OK)    │
+│  Rolling AUC std   0.014   (estable)        │
+│  Half-life edge    ~30 meses                │
+└──────────────────────────────────────────────┘
+```
+
+### Configuración operativa (threshold = 0.57)
+
+```
+┌──────────────────────────────────────────────┐
+│  Win Rate      58.7%   (break-even = 40%)   │
+│  Profit Factor  2.14x                        │
+│  Expectancy    +0.468% por trade             │
+│  Señales/día    ~7 de 48 velas posibles      │
+│  Sharpe         15.0                         │
+└──────────────────────────────────────────────┘
+```
+
+### Walk-Forward AUC por fold
+
+| Fold | AUC | PF | Win Rate |
+|:----:|:---:|:--:|:--------:|
+| 1 | 0.590 | 1.14 | 43.1% |
+| 2 | 0.599 | 0.86 | 36.3% |
+| 3 | 0.544 | 1.05 | 41.1% |
+| 4 | 0.551 | 1.13 | 42.9% |
+| 5 | 0.573 | 1.28 | 46.1% |
+| 6 | 0.557 | 1.18 | 44.1% |
+| 7 | 0.530 | 1.29 | 46.1% |
+| 8 | **0.530** | **1.28** | **45.9%** |
+| **Media** | **0.560** | **1.16** | **43.3%** |
+
+---
+
+## 🔍 Hallazgos Clave
+
+### 1. Edge Regime-Dependiente
+
+El modelo tiene **AUC 0.593 en alta volatilidad** vs **0.522 en baja volatilidad**. El 70% del alpha se concentra en el 30% de las velas con mayor ATR.
+
+### 2. DXY Lead-Lag — Descubrimiento Principal
+
+En datos **H1 con DXY diario**, el DXY **lidera el oro hasta 5 días**:
+
+```
+Lag  0d (contemporáneo): corr = -0.229
+Lag -1d (DXY lidera 1d): corr = -0.248
+Lag -5d (DXY lidera 5d): corr = -0.315  ← más fuerte
+```
+
+La correlación crece con el lag negativo — señal causal real, no correlación espuria.
+
+### 3. DXY Shock Edge
+
+```
+Cuando DXY cae > 0.15% en M30:
+  Régimen 0: oro sube 86.0% (N=458)
+  Régimen 1: oro sube 82.5% (N=120)
+  Régimen 3: oro sube 83.9% (N=280)
+```
+
+### 4. Feature Stability
+
+Top 5 features más estables e importantes:
+
+| Feature | Importancia | CV | Tipo |
+|:--------|:-----------:|:--:|:----:|
+| `hour` | 80.0 | 0.090 | Tiempo |
+| `vol_ratio_48` | 74.2 | 0.068 | Volatilidad |
+| `vol_48` | 69.2 | 0.087 | Volatilidad |
+| `atr_pct` | 61.8 | 0.203 | Volatilidad |
+| `is_london` | 48.8 | 0.081 | Tiempo |
+
+---
+
+## 🚀 Instalación y Uso
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/tu_usuario/gold_ml_project.git
+cd gold_ml_project
+
+# 2. Instalar dependencias
+pip install -r app_streamlit/requirements.txt
+
+# 3. Procesar datos
+python src/data_processing.py
+
+# 4. Entrenar (~5-10 min)
+python src/training.py
+
+# 5. Análisis completo
+python src/analysis.py
+python src/regime_modeling.py
+
+# 6. Evaluar
+python src/evaluation.py
+
+# 7. Streamlit App
+streamlit run app_streamlit/app.py
+```
+
+### Para datos H1 + DXY
+
+```bash
+# Pipeline H1 completo (incluye DXY diario)
+python src/pipeline_h1.py
+```
+
+---
+
+## 📁 Estructura
+
+```
+gold_ml_project/
+├── data/
+│   ├── raw/            → XAUUSD_DXY.csv · XAU_1h_data.csv · DXY_daily.csv
+│   ├── processed/      → gold_processed.csv · gold_h1_processed.csv
+│   ├── train/          → train.csv (70% temporal)
+│   ├── val/            → val.csv   (15% temporal)
+│   └── test/           → test.csv  (15% temporal)
 │
-├── main.py                    ← Runner principal (loop duplo)
-├── config.py                  ← Toda a configuração aqui
-├── diagnose.py                ← Diagnóstico de ligação MT5
+├── notebooks/
+│   ├── 01_Fuentes.ipynb
+│   ├── 02_LimpiezaEDA.ipynb
+│   └── 03_Entrenamiento_Evaluacion.ipynb
 │
 ├── src/
-│   ├── mt5_connector.py       ← Ligação MT5 + fetch OHLCV
-│   ├── zone_detector.py       ← Documento 1: Zonas válidas
-│   ├── gann_analyzer.py       ← Documento 2: Caixa de Gann
-│   ├── fibonacci_detector.py  ← Documento 3: Fibonacci φ
-│   ├── confluence_engine.py   ← Motor de confluências
-│   ├── trade_executor.py      ← Ordens LIMITE no MT5
-│   ├── position_manager.py    ← Trailing stop automático
-│   └── signal_generator.py   ← Output terminal + Telegram
+│   ├── data_processing.py   → Features + Triple Barrier + Leakage Audit
+│   ├── training.py          → Purged WF + Ensemble + Feature Stability
+│   ├── evaluation.py        → Métricas institucionales + SHAP
+│   ├── analysis.py          → Threshold Opt + DXY Lead-Lag + Rolling AUC
+│   ├── regime_modeling.py   → Modelos por régimen + Rolling Window
+│   ├── optimize.py          → TP/SL + High Vol filter tests
+│   └── pipeline_h1.py       → Pipeline H1 completo con DXY diario
 │
-├── logs/
-│   └── aureo.log
-└── requirements.txt
+├── models/
+│   ├── final_model.pkl
+│   ├── feature_stability.csv
+│   ├── threshold_optimization.csv
+│   └── h1/                  → Modelos H1 separados
+│
+├── app_streamlit/
+│   ├── app.py
+│   └── requirements.txt
+│
+└── docs/                    → Gráficos y métricas exportadas
 ```
 
 ---
 
-## 📐 Os Três Sistemas
+## 🏛️ Por qué este pipeline es institucional
 
-### 📦 Sistema 1 — Identificação de Zonas
-*Baseado no Programa Formativo – Identificação das Zonas*
-
-Uma zona é válida quando:
-
-| Critério | Regra |
-|---|---|
-| Estrutura | **1 vela única** — nunca padrão composto |
-| Tamanho | Corpo entre **20 e 70 pips** |
-| Contexto | Mínimo **3 velas opostas** antes e depois |
-| Exceção | H4/D1/W1: aceita **2 antes + 3 depois** |
-| Espaçamento | Mínimo **$150** entre zonas |
-| Validade | D1: 365 dias · H4: 120 dias · H1: 60 dias |
-
-Os 3 timeframes em cascata:
-```
-D1 (Primário 1)  →  H4 (Primário 2)  →  H1 (Secundário)
-   Visão macro         Estrutura           Refinamento
-```
+| Práctica | Implementación |
+|:---------|:---------------|
+| **Anti-leakage** | Features 100% estacionarias, sin precios absolutos, sin variables futuras |
+| **Validación temporal** | Purged Walk-Forward con embargo — estándar López de Prado (2018) |
+| **Sin data snooping** | Test set bloqueado hasta evaluación final, nunca visto durante desarrollo |
+| **Feature robustez** | Selección por CV entre folds, no por importancia en un solo modelo |
+| **Costos reales** | Backtest con spread 3 pips, sin slippage optimista |
+| **Métricas completas** | Sharpe, Sortino, Calmar, PF, Expectancy, IC, Stability R² |
+| **Half-life analysis** | Estimación de decaimiento del edge y frecuencia de retraining |
 
 ---
 
-### 🔲 Sistema 2 — Caixa de Gann Estatística
-*Baseado nos níveis estatísticos da metodologia Gann*
+## 🔮 Próximos Pasos
 
-```
-  swing_high ──────────────────────  1.000
-                                     0.750  ← Prioritário (+ reações)
-                                     0.666
-                                     0.500  ← Nível central
-                                     0.333
-                                     0.250  ← Prioritário (+ volume)
-  swing_low  ──────────────────────  0.000
-```
-
-A análise estatística em **M5** identifica:
-- **Prioritário 1** → nível com **mais reações** (quantidade)
-- **Prioritário 2** → nível com **maior volume** de reversão
-
-> A estatística é baseada nos **últimos 10 dias** de dados — não no histórico completo. Atualização recomendada a cada 10–15 dias.
+- [ ] **Validación live trading** — demo MT5 durante 3 meses, resultados reales documentados
+- [ ] **DXY H1 real-time** — explotar el lead-lag de 5 días descubierto en el análisis
+- [ ] **Datos alternativos** — COT (Commitment of Traders), sentiment de noticias
+- [ ] **API MT5** — integración Python para ejecución automática de señales
+- [ ] **Ensemble adaptativo** — retraining semestral automático con detección de régimen shift
 
 ---
 
-### 🌀 Sistema 3 — Fibonacci & Número de Ouro
-*Baseado no AUREO (φ = 1.618034...)*
+## 👤 Autor
 
-```
-  Extensões  →  1.618 φ  ────────────── alvo principal
-               1.500
-               1.333
-               1.000  ──────────────── topo do impulso
-
-  Impulso UP ↑
-
-               0.000  ──────────────── base do impulso
-  Retrações  →  0.333  ─ terço dourado
-               0.382
-               0.500  ─ meio
-               0.618  ────────────────  1/φ  ← nível dourado
-               0.666
-```
-
-O número de ouro atravessa toda a metodologia: 0.618 = 1/φ, 1.618 = φ.
+**Alexsandro** — Data Science Bootcamp · Madrid 2025
 
 ---
 
-## ⚙️ Configuração
-
-### Instalação
-
-```bash
-# Clonar o repositório
-git clone https://github.com/teu-username/aureo-system.git
-cd aureo-system
-
-# Instalar dependências
-pip install -r requirements.txt
-```
-
-> ⚠️ O MetaTrader 5 deve estar **aberto e logado** antes de correr qualquer script.
-
-### Configuração mínima (`config.py`)
-
-```python
-# Símbolo — verifica o nome exato no teu broker
-SYMBOL = "XAUUSD-ECN"    # VTMarkets · Infinox: "XAUUSD-ECN" ou "XAUUSDm"
-
-# Risco por trade
-RISK_PCT   = 0.01    # 1% do saldo
-SL_POINTS  = 250     # 250 pontos × $0.10 = $25 de SL
-TP_RATIO   = 2.5     # Ratio 1:2.5
-
-# Telegram
-TELEGRAM_TOKEN   = "SEU_TOKEN"
-TELEGRAM_CHAT_ID = "SEU_CHAT_ID"
-TELEGRAM_ENABLED = True
-
-# Execução automática
-AUTO_TRADE = True    # False = apenas alertas
-```
-
-### Verificar símbolo disponível
-
-```bash
-python diagnose.py
-```
-
----
-
-## 🚀 Uso
-
-```bash
-# Ver o mapa de confluências (não executa ordens)
-python main.py --report
-
-# Loop contínuo com execução automática
-python main.py
-```
-
----
-
-## 🔄 Loop de Execução
-
-```
-                     python main.py
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-          cada 30s                  cada 15min
-              │                         │
-              ▼                         ▼
-    ┌──────────────────┐     ┌───────────────────────┐
-    │  Trailing Stop   │     │    Scan Completo       │
-    │                  │     │                        │
-    │ Fase 1 @ +1R:    │     │ 1. Fetch OHLCV (4 TFs) │
-    │ → SL breakeven   │     │ 2. Zonas (D1+H4+H1)   │
-    │                  │     │ 3. Gann Box (M5 stats) │
-    │ Fase 2 @ +2R:    │     │ 4. Fibonacci (H4)      │
-    │ → Trail 1R atrás │     │ 5. Confluências        │
-    │                  │     │ 6. Alerta Telegram     │
-    │ Fase 3 @ +3R:    │     │ 7. Ordem LIMITE (MT5)  │
-    │ → Trail apertado │     │    se TRIPLE ativa     │
-    └──────────────────┘     └───────────────────────┘
-```
-
----
-
-## 📱 Alertas Telegram
-
-Quando uma TRIPLE confluência é detetada, o sistema envia:
-
-```
-🏆 AUREO SYSTEM — XAUUSD
-🕐 2026-05-13 17:16 UTC
-💰 Preço atual: 4698.64
-──────────────────────────────
-
-#1 — TRIPLE ⭐⭐⭐
-🟢 BUY @ 4668.24
-📏 Distância: 30 pips
-🎯 Score: 32.6
-🔗 📦 Zona + 🔲 Gann + 🌀 Fib
-  └ Gann 0.750 | Reações: 4
-  └ 🌟 Fib 0.382
-
-──────────────────────────────
-⚠️ Não é conselho financeiro.
-```
-
----
-
-## 📊 Gestão de Risco
-
-| Parâmetro | Valor | Equivalente |
-|---|---|---|
-| Risco por trade | 1% do saldo | $500 em conta de $50k |
-| Stop Loss | 250 pontos | $25 de distância |
-| Take Profit | SL × 2.5 | $62.50 de distância |
-| Ratio | 1:2.5 | 40% win rate para breakeven |
-| Trailing | 3 fases | Breakeven → Trail 1R → Trail 0.5R |
-| Tipo de ordem | LIMIT | Só executa quando preço chega ao nível |
-
----
-
-## 🧠 Exemplo Real — 13 Mai 2026
-
-```
-XAUUSD-ECN @ 4698
-─────────────────────────────────────────────────────
-4934 ──── DOUBLE ⭐⭐  Zona H4 BEARISH + Fib 1.618φ
-─────────────────────────────────────────────────────
-4826 ──── Zona H1 BEARISH
-4765 ──── Ext Fib 1.0 (topo do impulso recente)
-─────────────────────────────────────────────────────
-4698 ════ PREÇO ATUAL
-─────────────────────────────────────────────────────
-4668 ──── TRIPLE ⭐⭐⭐  Zona H4 + Gann 0.75 + Fib 0.382
-          └ Gann: 4 reações confirmadas em M5
-          └ BUY LIMIT @ 4668 · SL: 4643 · TP: 4730
-─────────────────────────────────────────────────────
-4602 ──── Fib 0.618 🌟 (nível dourado)
-4476 ──── Zona D1 BEARISH
-```
-
----
-
-## 🛠️ Stack Técnica
-
-| Componente | Tecnologia |
-|---|---|
-| Linguagem | Python 3.10+ |
-| Broker API | MetaTrader 5 Python API |
-| Dados | OHLCV via `mt5.copy_rates_from_pos` |
-| Análise | Pandas + NumPy |
-| Alertas | Telegram Bot API |
-| Execução | Ordens LIMIT via `mt5.order_send` |
-
----
-
-## 📁 Ficheiros Principais
-
-| Ficheiro | Função |
-|---|---|
-| `config.py` | Toda a configuração — começa aqui |
-| `diagnose.py` | Verifica ligação MT5 e nome do símbolo |
-| `main.py --report` | Scan único com relatório completo |
-| `main.py` | Loop contínuo de produção |
-| `logs/aureo.log` | Log completo de todas as operações |
-
----
-
-## ⚠️ Disclaimer
-
-Este sistema é uma ferramenta de **suporte à decisão**. Não garante lucros. O trading de ouro envolve risco significativo de perda de capital. Testa sempre numa conta demo antes de usar capital real.
-
----
-
-<div align="center">
-
-**Construído com Python · MetaTrader 5 · Fibonacci φ = 1.618**
-
-*"A estatística dentro da metodologia serve como bússola objetiva,*  
-*permitindo unir técnica e lógica probabilística."*
-
-<br/>
-
-![Python](https://img.shields.io/badge/python-3.10+-blue?style=flat-square&logo=python)
-![MT5](https://img.shields.io/badge/MetaTrader-5-darkblue?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![Status](https://img.shields.io/badge/status-active-brightgreen?style=flat-square)
-
-</div>
+<p align="center">
+  <em>GoldSense ML · XAUUSD Quantitative System · Madrid 2025</em>
+</p>
