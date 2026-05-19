@@ -283,10 +283,10 @@ gold_ml_project/
 
 ## 👤 Autor
 
-**Alexsandro** — Data Science Bootcamp · Madrid 2025
+**Alexsandro** — Data Science Bootcamp · Madrid 2026
 
 ---
 
 <p align="center">
-  <em>GoldSense ML · XAUUSD Quantitative System · Madrid 2025</em>
+  <em>GoldSense ML · XAUUSD Quantitative System · Madrid 2026</em>
 </p>
